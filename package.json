@@ -1,0 +1,28 @@
+{
+  "name": "happy-birthday-dad",
+  "version": "1.0.0",
+  "description": "З днем народження тебе!",
+  "type": "module",
+  "browserslist": "> 0.5%, last 2 versions, not dead",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx parcel src/index.html",
+    "build": "parcel build src/index.html --public-url /happy-birthday-dad/",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
+  },
+  "keywords": [],
+  "author": "Від Владиславчика",
+  "license": "ISC",
+  "devDependencies": {
+    "@pnotify/core": "^5.2.0",
+    "@pnotify/mobile": "^5.2.0",
+    "parcel": "^2.16.4",
+    "parcel-transformer-hbs": "^1.0.4"
+  },
+  "dependencies": {
+    "axios": "^1.20.0",
+    "gh-pages": "^6.3.0",
+    "handlebars": "^4.7.9"
+  }
+}

@@ -1,0 +1,26 @@
+<div class="card {{tipo}}">
+    <h2>{{nome}}</h2>
+    <p class="distance-row">📍 <strong>Відстань:</strong> <span class="km-value" data-lat="{{lat}}" data-lon="{{lon}}">Рахуємо...</span></p>
+    <p><strong>🌡️ Погода зараз:</strong> {{meteoInfo}}</p>
+    <div class="fish-section">
+        <strong>🐟 Основна риба (натисніть для інфо):</strong> 
+        <div class="fish-container">
+            {{#each pesci}}
+                <span class="badge-fish" data-fish="{{this}}">{{this}}</span>
+            {{/each}}
+        </div>
+    </div>
+    <p class="description">Інформації {{info_generale}}</p>
+    <div class="fish-details-modal" id="details-{{id}}" style="display: none;"></div>
+    <div class="card-actions">
+        <a href="https://google.com{{lat}},{{lon}}" 
+           target="_blank" 
+           rel="noopener noreferrer" 
+           class="btn-navigatore"
+           data-nome="{{nome}}"
+           data-lat="{{lat}}"
+           data-lon="{{lon}}">
+           🚗 Відкрити навігатор
+        </a>
+    </div>
+</div>

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ua">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Риболовля в Італії</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/modern-normalize/3.0.1/modern-normalize.min.css" integrity="sha512-q6WgHqiHlKyOqslT/lgBgodhd03Wp4BEqKeW6nNtlOY4quzyG3VoQKFrieaCeSnuVseNKRGpGeDU3qPmabCANg==" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="./css/reset.css">
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <h1>🎣 Рибальські локації в Італії</h1>
+    <div class="controls">
+        <div class="row-select">
+            <select id="region-select"></select>
+        </div>
+        <div class="filter-buttons">
+            <button id="btn-all" class="active">Усі</button>
+            <button id="btn-naturale">Природні</button>
+            <button id="btn-privato">Приватні</button>
+            <button id="btn-costa">Морські</button>
+        </div>
+    </div>
+    <div id="spots-container" class="grid"></div>
+    <script type="module" src="./js/main.js"></script>
+</body>
+</html>
