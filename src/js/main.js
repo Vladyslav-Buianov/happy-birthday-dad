@@ -1,4 +1,5 @@
 import { spotPescaItalia, regioniNomi } from "./fishingSpots";
+import { fetchFishInfo } from "./fishService";
 import cardTemplate from "../markups/card.hbs";
 import { alert, Stack } from "@pnotify/core";
 import "@pnotify/core/dist/PNotify.css";
@@ -55,7 +56,7 @@ function aggiornaDistanzeInterfaccia() {
       userCoords.lat,
       userCoords.lon,
       destLat,
-      destLon,
+      destLon
     );
     el.innerText = `~${dist} км (твоя геопозиція)`;
   });
@@ -87,7 +88,7 @@ function richiediPosizioneReale() {
       (error) => {
         console.warn("Geolocalizzazione non disponibile.");
       },
-      { enableHighAccuracy: true, timeout: 5000 },
+      { enableHighAccuracy: true, timeout: 5000 }
     );
   }
 }
@@ -96,7 +97,7 @@ async function renderCards() {
   container.innerHTML = '<div class="loader">Оновлення погоди...</div>';
   
   let filteredSpots = spotPescaItalia.filter(
-    (spot) => spot.regione === regioneAttuale,
+    (spot) => spot.regione === regioneAttuale
   );
   if (tipoAttuale !== "all") {
     filteredSpots = filteredSpots.filter((spot) => spot.tipo === tipoAttuale);
@@ -114,12 +115,12 @@ async function renderCards() {
       let meteoInfo = "Немає даних";
       try {
         const res = await fetch(
-          `https://api.open-meteo.com/v1/forecast?latitude=${spot.lat}&longitude=${spot.lon}&hourly=temperature_2m&timezone=Europe%2FBerlin`,
+          `https://api.open-meteo.com/v1/forecast?latitude=${spot.lat}&longitude=${spot.lon}&hourly=temperature_2m&timezone=Europe%2FBerlin`
         );
         const data = await res.json();
         if (data.hourly && data.hourly.time) {
           const indiceOra = data.hourly.time.findIndex((t) =>
-            t.startsWith(oraAttualeISO.substring(0, 13)),
+            t.startsWith(oraAttualeISO.substring(0, 13))
           );
           const indexFinal = indiceOra !== -1 ? indiceOra : 0;
           meteoInfo = `${data.hourly.temperature_2m[indexFinal]}°C`;
@@ -144,17 +145,15 @@ async function renderCards() {
   }
 }
 
-container.addEventListener("click", (e) => {
+container.addEventListener("click", async (e) => {
   const targetLink = e.target.closest(".btn-navigatore");
   if (targetLink) {
     const nomePosto = targetLink.getAttribute("data-nome");
     const destLat = targetLink.getAttribute("data-lat");
     const destLon = targetLink.getAttribute("data-lon");
-
     if (userCoords) {
-      targetLink.href = `https://google.com?api=1origin=${userCoords.lat},${userCoords.lon}&destination=${destLat},${destLon}`;
+      targetLink.href = `https://www.google.com/maps/dir/?api=1&origin=${userCoords.lat},${userCoords.lon}&destination=${destLat},${destLon}`;
     }
-
     alert({
       title: "Чудовий вибір! 🌟",
       text: `Маршрут до місця "${nomePosto}" відкрито в новій вкладці. Гарної риболовлі!`,
@@ -162,6 +161,43 @@ container.addEventListener("click", (e) => {
       stack: topCenterStack,
       delay: 3500,
     });
+    return;
+  }
+  const fishBadge = e.target.closest(".badge-fish");
+  if (fishBadge) {
+    const fishName = fishBadge.getAttribute("data-fish");
+    const cardId = fishBadge.getAttribute("data-card-id");
+    const detailsContainer = document.getElementById(`details-${cardId}`);
+
+    if (!detailsContainer) return;
+    if (
+      detailsContainer.style.display === "block" &&
+      detailsContainer.dataset.currentFish === fishName
+    ) {
+      detailsContainer.style.display = "none";
+      return;
+    }
+    detailsContainer.dataset.currentFish = fishName;
+    detailsContainer.innerHTML = `<div class="fish-loading">Завантаження інформації про "${fishName}"...</div>`;
+    detailsContainer.style.display = "block";
+
+    const fishInfo = await fetchFishInfo(fishName);
+    detailsContainer.innerHTML = `
+      <div class="fish-info-box">
+        <h3>${fishInfo.name}</h3>
+        <div class="fish-img-wrapper">
+        </div>
+        <div class="fish-details-list">
+          <p><strong>🛡️ Статус загрози:</strong> ${fishInfo.status}</p>
+          <p><strong>🪱 Найкраща наживка:</strong> ${fishInfo.bait}</p>
+          <p><strong>ℹ Загальна інформація:</strong> ${fishInfo.description}</p>
+          <p><strong>💡 Цікавий факт:</strong> ${fishInfo.fact}</p>
+        </div>
+        <button type="button" class="btn-close-fish" onclick="this.closest('.fish-details-modal').style.display='none'">
+          Закрити
+        </button>
+      </div>
+    `;
   }
 });
 
